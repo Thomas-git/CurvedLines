@@ -62,9 +62,10 @@
 	 fit:              bool true => forces the max,mins of the curve to be on the datapoints
 	 curvePointFactor  int  defines how many "virtual" points are used per "real" data point to
 	 						emulate the curvedLines
-	 fitPointDist:     int  defines the x axis distance of the additional two points that are used
+	 fitPointDistY:     int  defines the y axis distance of the additional two points that are used
 	 						to enforce the min max condition. (you will get curvePointFactor * 3 * |datapoints|
 	 						"virtual" points if fit is true)
+	 fitPointDistX:     int  defines the x axis distance of the additional two points that are used
 	 						
 	 + line options (since v0.5 curved lines use flots line implementation for drawing
 	   => line options like fill, show ... are supported out of the box)
@@ -91,7 +92,8 @@
 					apply: false,
 					fit : false,
 					curvePointFactor : 20,
-					fitPointDist : 0.0001
+					fitPointDistY : 0.0001,
+					fitPointDistX : 0.09
 				}
 			}
 		};
@@ -197,6 +199,7 @@
 					//to have a max,min at the data point however only if it is a lowest or highest point of the
 					//curve => avoid saddles
 					var neigh = curvedLinesOptions.fitPointDist;
+					var xres = curvedLinesOptions.fitPointDistX;
 
 					for (var i = 0; i < points.length; i += ps) {
 
@@ -206,7 +209,7 @@
 						curY = i + yPos;
 
 						//smooth front
-						front[X] = points[curX] - 0.1;
+						front[X] = points[curX] - xres;
 						if (i >= ps) {
 							front[Y] = points[curY - ps] * neigh + points[curY] * (1 - neigh);
 						} else {
@@ -214,7 +217,7 @@
 						}
 
 						//smooth back
-						back[X] = points[curX] + 0.1;
+						back[X] = points[curX] + xres;
 						if ((i + ps) < points.length) {
 							back[Y] = points[curY + ps] * neigh + points[curY] * (1 - neigh);
 						} else {
